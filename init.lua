@@ -166,6 +166,27 @@ vim.o.scrolloff = 10
 -- See `:help 'confirm'`
 vim.o.confirm = true
 
+-- [[ Custom Mappings ]]
+-- Escape
+vim.keymap.set('i', 'kj', '<Esc>')
+vim.keymap.set('t', 'kj', '<C-\\><C-n>')
+-- Save
+vim.keymap.set('n', '<leader>w', ':wa<CR>')
+-- Close
+-- vim.keymap.set('n', '<leader>x', ':q<CR>')
+
+-- Splits
+vim.keymap.set('n', '<leader>sj', ':split<CR>')
+vim.keymap.set('n', '<leader>sl', ':vsplit<CR>')
+
+-- Neo-tree
+vim.keymap.set('n', '<leader>a', ':Neotree toggle<CR>')
+
+-- Buffer navigation
+vim.keymap.set('n', '<S-H>', ':bprevious<CR>')
+vim.keymap.set('n', '<S-L>', ':bnext<CR>')
+vim.keymap.set('n', '<leader>x', ':bp <BAR> bd #<CR>')
+
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
@@ -974,17 +995,17 @@ require('lazy').setup({
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
   -- require 'kickstart.plugins.debug',
-  -- require 'kickstart.plugins.indent_line',
+  require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
-  -- require 'kickstart.plugins.autopairs',
-  -- require 'kickstart.plugins.neo-tree',
+  require 'kickstart.plugins.autopairs',
+  require 'kickstart.plugins.neo-tree',
   -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
   --
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
-  -- { import = 'custom.plugins' },
+  { import = 'custom.plugins' },
   --
   -- For additional information with loading, sourcing and examples see `:help lazy.nvim-🔌-plugin-spec`
   -- Or use telescope!
