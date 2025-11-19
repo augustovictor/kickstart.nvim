@@ -182,10 +182,17 @@ vim.keymap.set('n', '<leader>sl', ':vsplit<CR>')
 -- Neo-tree
 vim.keymap.set('n', '<leader>a', ':Neotree toggle<CR>')
 
--- Buffer navigation
+-- Buffer
 vim.keymap.set('n', '<S-H>', ':bprevious<CR>')
 vim.keymap.set('n', '<S-L>', ':bnext<CR>')
-vim.keymap.set('n', '<leader>x', ':bp <BAR> bd #<CR>')
+vim.keymap.set('n', '<leader>xx', ':bp <BAR> bd #<CR>')
+vim.keymap.set('n', '<leader>xq', ':q<CR>')
+vim.keymap.set('n', '<S-R>', ':e<CR>')
+
+-- Copy file path
+vim.keymap.set('n', '<localleader>yp', function()
+  vim.fn.setreg('+', vim.fn.expand '%:p:h')
+end, { desc = 'Copy file path' })
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
@@ -694,7 +701,7 @@ require('lazy').setup({
       local servers = {
         -- clangd = {},
         -- gopls = {},
-        -- pyright = {},
+        pyright = {},
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --

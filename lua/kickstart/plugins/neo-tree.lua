@@ -18,6 +18,10 @@ return {
       window = {
         mappings = {
           ['\\'] = 'close_window',
+          ['ga'] = 'git_add_file',
+          ['gu'] = 'git_unstage_file',
+          ['gc'] = 'git_commit',
+          ['gp'] = 'git_push',
         },
       },
       follow_current_file = {
