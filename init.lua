@@ -952,12 +952,12 @@ require('lazy').setup({
           -- colors.bg_float = '#3c3f41' -- Slightly lighter for documentation popups
 
           -- 3. Syntax Colors
-          colors.orange = '#CC7832'
-          colors.green = '#6A8755'
+          colors.orange = '#CC7833'
+          colors.green = '#6A8759'
           colors.yellow = '#FBC862'
-          colors.purple = '#9676ac'
-          colors.blue = '#6897BB'
-          colors.comment = '#8e9292'
+          colors.purple = '#9876AA'
+          colors.blue = '#769AA5'
+          colors.comment = '#808080'
         end,
 
         on_highlights = function(hl, c)
@@ -976,7 +976,7 @@ require('lazy').setup({
           hl['@variable'] = { fg = c.fg }
           hl['@constant'] = { fg = c.purple }
           hl['@property'] = { fg = c.purple }
-          hl['@type'] = { fg = c.purple }
+          hl['@type'] = { fg = c.orange }
 
           ---------------------------------------------------------
           -- SIDEBAR CONFIGURATION (IntelliJ Style)
@@ -996,7 +996,7 @@ require('lazy').setup({
           -- IntelliJ highlights the currently open file with a different background or bold text
           hl.NeoTreeFileNameOpened = { fg = c.fg, bold = true }
           -- If you want the background highlight style:
-          -- hl.NeoTreeCursorLine = { bg = '#0d293e' }
+          hl.NeoTreeCursorLine = { bg = '#0d293e' }
 
           -- 4. Git Status Colors (Matching IntelliJ)
           hl.NeoTreeGitAdded = { fg = c.green }
