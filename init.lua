@@ -181,25 +181,21 @@ vim.keymap.set('n', '<leader>sl', ':vsplit<CR>')
 
 -- Neo-tree
 vim.keymap.set('n', '<leader>a', ':Neotree toggle<CR>')
-
 -- Buffer
 vim.keymap.set('n', '<S-H>', ':bprevious<CR>')
 vim.keymap.set('n', '<S-L>', ':bnext<CR>')
 vim.keymap.set('n', '<leader>xx', ':bp <BAR> bd #<CR>')
 vim.keymap.set('n', '<leader>xq', ':q<CR>')
 vim.keymap.set('n', '<S-R>', ':e<CR>')
-
 -- Copy file path
 vim.keymap.set('n', '<localleader>yp', function()
   vim.fn.setreg('+', vim.fn.expand '%:p:h')
 end, { desc = 'Copy file path' })
-
 -- Search
 vim.keymap.set('x', '/', '<Esc>/\\%V')
-
 -- Custom configs
--- vim.opt.termguicolors = true
--- vim.o.showtabline = true
+vim.g.loaded_netrw = 1 -- disable netrw
+vim.g.loaded_netrwPlugin = 1 -- disable netrw
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
@@ -719,6 +715,9 @@ require('lazy').setup({
         -- clangd = {},
         -- gopls = {},
         pyright = {},
+        terraformls = {
+          filetypes = { 'terraform', 'tf', 'hcl' },
+        },
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
@@ -761,6 +760,11 @@ require('lazy').setup({
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
+        'terraform',
+        'terraform-ls',
+        'yamlfmt',
+        'black', -- Used to format Python code
+        'isort', -- Used to sort imports in Python code
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -813,11 +817,49 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
+        terraform = { 'terraform' },
+        json = { 'jq' },
+        tf = { 'terraform' },
+        hcl = { 'hclfmt' },
+        yml = { 'yamlfmt' },
+        yaml = { 'yamlfmt' },
+        k8s_yaml = { 'kubeconform' },
         -- Conform can also run multiple formatters sequentially
-        -- python = { "isort", "black" },
+        python = { 'isort', 'black' },
         --
         -- You can use 'stop_after_first' to run the first available formatter from the list
         -- javascript = { "prettierd", "prettier", stop_after_first = true },
+      },
+      formatters = {
+        jq = {
+          command = 'jq',
+          args = { '.', '$FILENAME' },
+          stdin = true,
+        },
+        kubeconform = {
+          command = 'kubeconform',
+          args = {
+            '--strict', -- Example argument for strict validation
+            '--ignore-missing-schemas',
+            -- '--kubernetes-version',
+            -- '1.29.0', -- Specify your Kubernetes version
+            '--schema-location',
+            'default', -- Use default schema locations
+            '--output',
+            'json', -- Or other desired output format
+            '$FILENAME', -- Pass the current file to kubeconform
+          },
+          stdin = true,
+        },
+        terraform = {
+          command = 'terraform',
+          args = { 'fmt', '-' },
+          stdin = true,
+        },
+        hclfmt = {
+          command = 'hclfmt',
+          stdin = true,
+        },
       },
     },
   },
@@ -1063,7 +1105,23 @@ require('lazy').setup({
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+      ensure_installed = {
+        'bash',
+        'c',
+        'diff',
+        'html',
+        'lua',
+        'luadoc',
+        'markdown',
+        'markdown_inline',
+        'query',
+        'vim',
+        'vimdoc',
+        'terraform',
+        'hcl',
+        'yaml',
+        'python',
+      },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
@@ -1097,7 +1155,7 @@ require('lazy').setup({
   -- require 'kickstart.plugins.lint',
   require 'kickstart.plugins.autopairs',
   require 'kickstart.plugins.neo-tree',
-  -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
+  require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
