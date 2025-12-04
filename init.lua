@@ -180,7 +180,7 @@ vim.keymap.set('n', '<leader>sj', ':split<CR>')
 vim.keymap.set('n', '<leader>sl', ':vsplit<CR>')
 
 -- Neo-tree
-vim.keymap.set('n', '<leader>a', ':Neotree toggle<CR>')
+-- vim.keymap.set('n', '<leader>a', ':Neotree toggle<CR>')
 -- Buffer
 vim.keymap.set('n', '<S-H>', ':bprevious<CR>')
 vim.keymap.set('n', '<S-L>', ':bnext<CR>')
@@ -922,7 +922,7 @@ require('lazy').setup({
         -- <c-k>: Toggle signature help
         --
         -- See :h blink-cmp-config-keymap for defining your own keymap
-        preset = 'default',
+        preset = 'super-tab',
 
         -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
         --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
@@ -1045,7 +1045,7 @@ require('lazy').setup({
           hl.NeoTreeGitConflict = { fg = c.orange }
           hl.NeoTreeGitDeleted = { fg = c.comment }
           hl.NeoTreeGitIgnored = { fg = c.comment }
-          hl.NeoTreeGitModified = { fg = c.blue } -- Modified files are Blue in IntelliJ
+          hl.NeoTreeGitModified = { fg = c.orange, bold = true }
           hl.NeoTreeGitUntracked = { fg = c.orange }
 
           -- 5. Window Separator
