@@ -3,6 +3,7 @@ return {
   config = function()
     vim.g.floaterm_width = 0.95
     vim.g.floaterm_height = 0.95
+    vim.g.floaterm_autoinsert = false
 
     -- Setup keymaps for terminal buffers
     local function setup_terminal_keymaps()
