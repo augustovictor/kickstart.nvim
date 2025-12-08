@@ -1,14 +1,7 @@
 return {
-  'rmagatti/auto-session',
-  lazy = false,
-
-  ---enables autocomplete for opts
-  ---@module "auto-session"
-  ---@type AutoSession.Config
-  opts = {
-    suppressed_dirs = { '~/', '~/Projects', '~/Downloads', '/' },
-    -- Session under: ~/.local/share/nvim/sessions/
-    bypass_session_save_file_types = { 'neo-tree', 'netrw' },
-    -- log_level = 'debug',
-  },
+  'tpope/vim-obsession',
+  -- Session.vim will be saved in the current directory
+  -- Start tracking: :Obsession (or :Obsession <filename>)
+  -- Stop tracking: :Obsession!
+  -- Auto-loads Session.vim if it exists in the current directory
 }
