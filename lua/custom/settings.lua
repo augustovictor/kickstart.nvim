@@ -1,4 +1,17 @@
--- [[ Custom Configs ]]
+-- [[ Custom configs]]
+vim.g.loaded_netrw = 1 -- disable netrw
+vim.g.loaded_netrwPlugin = 1 -- disable netrw
+vim.opt.fileformats = { 'unix', 'mac', 'dos' } -- set file formats
+
+-- [[ Per filetype settings ]]
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = { 'yaml', 'yml' },
+  callback = function()
+    vim.wo.cursorcolumn = true
+    vim.api.nvim_set_hl(0, 'CursorColumn', { bg = '#2f3740' })
+  end,
+})
+
 -- [[ Custom Remaps ]]
 -- Escape
 vim.keymap.set('i', 'kj', '<Esc>')
@@ -29,11 +42,6 @@ end, { desc = 'Copy current file path to clipboard', silent = true })
 -- Search
 vim.keymap.set('x', '/', '<Esc>/\\%V', { desc = 'Search in visual selection', silent = true })
 
--- [[ Custom configs]]
-vim.g.loaded_netrw = 1 -- disable netrw
-vim.g.loaded_netrwPlugin = 1 -- disable netrw
-vim.opt.fileformats = { 'unix', 'mac', 'dos' } -- set file formats
-
 -- vim-visual-multi
 -- Register with vim-which-key
 local wk = require 'which-key'
@@ -43,4 +51,21 @@ wk.add {
   { '<leader>mr', '<Plug>(VM-Start-Regex-Search)', desc = 'Regex Search', mode = 'n' },
   { '<leader>mp', '<Plug>(VM-Add-Cursor-At-Pos)', desc = 'Add Cursor At Pos', mode = 'n' },
   { '<leader>mo', '<Plug>(VM-Toggle-Mappings)', desc = 'Toggle Mappings', mode = 'n' },
+}
+
+-- [[ Telescope Custom Mappings ]]
+local telescope = require 'telescope'
+local actions = require 'telescope.actions'
+
+telescope.setup {
+  defaults = {
+    mappings = {
+      i = {
+        ['<S-h>'] = actions.preview_scrolling_left,
+        ['<S-j>'] = actions.preview_scrolling_down,
+        ['<S-k>'] = actions.preview_scrolling_up,
+        ['<S-l>'] = actions.preview_scrolling_right,
+      },
+    },
+  },
 }
