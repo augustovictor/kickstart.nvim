@@ -17,14 +17,6 @@ return {
 
     require('neo-tree').setup(opts)
 
-    -- Auto-refresh neo-tree on file save
-    vim.api.nvim_create_autocmd('BufWritePost', {
-      pattern = '*',
-      callback = function()
-        require('neo-tree.sources.manager').refresh('filesystem')
-      end,
-    })
-
     vim.keymap.set('n', '<leader>ff', function()
       local state = require('neo-tree.sources.manager').get_state 'filesystem'
       ---@diagnostic disable-next-line: undefined-field

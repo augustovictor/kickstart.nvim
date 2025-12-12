@@ -3,6 +3,11 @@ vim.g.loaded_netrw = 1 -- disable netrw
 vim.g.loaded_netrwPlugin = 1 -- disable netrw
 vim.opt.fileformats = { 'unix', 'mac', 'dos' } -- set file formats
 
+-- [[ Custom Commands ]]
+vim.keymap.set('n', '<leader>st', function()
+  vim.cmd.edit '~/projects/personal/telos/personal_telos.md'
+end, { desc = '[S]earch [t]elos file' })
+
 -- [[ Per filetype settings ]]
 vim.api.nvim_create_autocmd('FileType', {
   pattern = { 'yaml', 'yml' },
@@ -17,7 +22,13 @@ vim.api.nvim_create_autocmd('FileType', {
 vim.keymap.set('i', 'kj', '<Esc>')
 vim.keymap.set('t', 'kj', '<C-\\><C-n>')
 -- Save
-vim.keymap.set('n', '<leader>w', ':wa<CR>')
+vim.keymap.set('n', '<leader>w', ':wa<CR>', {
+  desc = 'Save all files',
+  silent = true,
+  callback = function()
+    require('neo-tree.sources.manager').refresh 'filesystem'
+  end,
+})
 
 -- Splits
 vim.keymap.set('n', '<leader>sj', ':split<CR>')
