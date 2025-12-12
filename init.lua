@@ -166,37 +166,6 @@ vim.o.scrolloff = 10
 -- See `:help 'confirm'`
 vim.o.confirm = true
 
--- [[ Custom Remaps ]]
--- Escape
-vim.keymap.set('i', 'kj', '<Esc>')
-vim.keymap.set('t', 'kj', '<C-\\><C-n>')
--- Save
-vim.keymap.set('n', '<leader>w', ':wa<CR>')
--- Close
--- vim.keymap.set('n', '<leader>x', ':q<CR>')
-
--- Splits
-vim.keymap.set('n', '<leader>sj', ':split<CR>')
-vim.keymap.set('n', '<leader>sl', ':vsplit<CR>')
-
--- Neo-tree
--- vim.keymap.set('n', '<leader>a', ':Neotree toggle<CR>')
--- Buffer
-vim.keymap.set('n', '<S-H>', ':bprevious<CR>')
-vim.keymap.set('n', '<S-L>', ':bnext<CR>')
-vim.keymap.set('n', '<leader>xx', ':bp <BAR> bd #<CR>')
-vim.keymap.set('n', '<leader>xq', ':q<CR>')
-vim.keymap.set('n', '<S-R>', ':e<CR>')
--- Copy file path
-vim.keymap.set('n', '<localleader>yp', function()
-  vim.fn.setreg('+', vim.fn.expand '%:p:h')
-end, { desc = 'Copy file path' })
--- Search
-vim.keymap.set('x', '/', '<Esc>/\\%V')
--- [[ Custom configs]]
-vim.g.loaded_netrw = 1 -- disable netrw
-vim.g.loaded_netrwPlugin = 1 -- disable netrw
-
 -- Auto change directory to the opened file/folder and start session tracking
 vim.api.nvim_create_autocmd('VimEnter', {
   nested = true,
@@ -213,7 +182,7 @@ vim.api.nvim_create_autocmd('VimEnter', {
 
     -- Check if we should track sessions in this directory
     local cwd = vim.fn.getcwd()
-    local suppressed_dirs = { vim.fn.expand('~/'), vim.fn.expand('~/Projects'), vim.fn.expand('~/Downloads'), '/' }
+    local suppressed_dirs = { vim.fn.expand '~/', vim.fn.expand '~/Projects', vim.fn.expand '~/Downloads', '/' }
     local should_track = true
 
     for _, dir in ipairs(suppressed_dirs) do
@@ -229,14 +198,14 @@ vim.api.nvim_create_autocmd('VimEnter', {
       if vim.fn.filereadable(session_file) == 1 then
         vim.cmd('source ' .. session_file)
       end
-      vim.cmd('Obsession')
+      vim.cmd 'Obsession'
     end
   end,
 })
 
 -- [[ Custom commands ]]
 vim.keymap.set('n', '<leader>st', function()
-  vim.cmd.edit('~/projects/personal/telos/personal_telos.md')
+  vim.cmd.edit '~/projects/personal/telos/personal_telos.md'
 end, { desc = '[S]earch [t]elos file' })
 
 -- [[ Basic Keymaps ]]
@@ -1230,6 +1199,9 @@ require('lazy').setup({
     },
   },
 })
+
+-- Custom settings import
+require 'custom.settings'
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
