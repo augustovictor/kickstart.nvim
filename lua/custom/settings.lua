@@ -1,6 +1,4 @@
 -- [[ Custom configs]]
-vim.g.loaded_netrw = 1 -- disable netrw
-vim.g.loaded_netrwPlugin = 1 -- disable netrw
 vim.opt.fileformats = { 'unix', 'mac', 'dos' } -- set file formats
 
 -- [[ Custom Commands ]]
