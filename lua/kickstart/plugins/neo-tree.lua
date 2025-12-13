@@ -27,9 +27,7 @@ local function copy_path(state)
     { label = 'Extension of the filename', value = modify(filename, ':e') },
   }
 
-  -- THE CHANGE IS ON THIS LINE:
-  -- Instead of vim.ui.select, we call the snacks picker directly.
-  require('snacks').picker.select(choices, {
+  vim.ui.select(choices, {
     prompt = 'Choose to copy to clipboard:',
     format_item = function(item)
       return string.format('%-30s %s', item.label, item.value)
