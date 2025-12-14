@@ -20,12 +20,12 @@ vim.api.nvim_create_autocmd('FileType', {
 vim.keymap.set('i', 'kj', '<Esc>')
 vim.keymap.set('t', 'kj', '<C-\\><C-n>')
 -- Save
-vim.keymap.set('n', '<leader>w', ':wa<CR>', {
+vim.keymap.set('n', '<leader>w', function()
+  vim.cmd 'wa'
+  require('neo-tree.sources.manager').refresh 'filesystem'
+end, {
   desc = 'Save all files',
   silent = true,
-  callback = function()
-    require('neo-tree.sources.manager').refresh 'filesystem'
-  end,
 })
 
 -- Splits
