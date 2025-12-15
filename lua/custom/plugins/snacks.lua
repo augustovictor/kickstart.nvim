@@ -21,7 +21,7 @@ return {
     },
     -- Enable smooth scrolling
     scroll = {
-      enabled = true,
+      enabled = false,
     },
     -- Enable quickfile for better performance
     quickfile = {
