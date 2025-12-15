@@ -14,6 +14,25 @@ return {
         show_close_icon = false,
         diagnostics = 'nvim_lsp',
         always_show_bufferline = true,
+        offsets = {
+          {
+            filetype = 'neo-tree',
+            text = 'File Explorer',
+            text_align = 'left',
+            separator = true,
+          },
+        },
+        custom_filter = function(buf, _)
+          -- Hide empty, unmodified buffers (like the initial [No Name] buffer)
+          if
+            vim.fn.bufname(buf) == ''
+            and vim.api.nvim_get_option_value('buftype', { buf = buf }) == ''
+            and not vim.api.nvim_get_option_value('modified', { buf = buf })
+          then
+            return false
+          end
+          return true
+        end,
       },
     }
   end,
