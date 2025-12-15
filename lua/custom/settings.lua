@@ -16,6 +16,14 @@ vim.api.nvim_create_autocmd('FileType', {
   end,
 })
 
+-- Refresh neo-tree on git operations
+vim.api.nvim_create_autocmd('User', {
+  pattern = 'GitOperationComplete',
+  callback = function()
+    require('neo-tree.sources.manager').refresh 'filesystem'
+  end,
+})
+
 -- [[ Custom Remaps ]]
 -- Escape
 vim.keymap.set('i', 'kj', '<Esc>')
@@ -51,6 +59,44 @@ vim.keymap.set('n', '<localleader>yp', function()
 end, { desc = 'Copy current file path to clipboard', silent = true })
 -- Search
 vim.keymap.set('x', '/', '<Esc>/\\%V', { desc = 'Search in visual selection', silent = true })
+
+-- Git operations for current buffer
+vim.keymap.set('n', 'ga', function()
+  local filepath = vim.api.nvim_buf_get_name(0)
+  if filepath ~= '' then
+    vim.fn.system('git add ' .. vim.fn.shellescape(filepath))
+    print('Added: ' .. vim.fn.fnamemodify(filepath, ':t'))
+    vim.api.nvim_exec_autocmds('User', { pattern = 'GitOperationComplete' })
+  end
+end, { desc = 'Git [a]dd current buffer' })
+
+vim.keymap.set('n', 'gu', function()
+  local filepath = vim.api.nvim_buf_get_name(0)
+  if filepath ~= '' then
+    vim.fn.system('git reset ' .. vim.fn.shellescape(filepath))
+    print('Unstaged: ' .. vim.fn.fnamemodify(filepath, ':t'))
+    vim.api.nvim_exec_autocmds('User', { pattern = 'GitOperationComplete' })
+  end
+end, { desc = 'Git [u]nstage current buffer' })
+
+vim.keymap.set('n', 'gc', function()
+  local filepath = vim.api.nvim_buf_get_name(0)
+  if filepath ~= '' then
+    local commit_msg = vim.fn.input 'Commit message: '
+    if commit_msg ~= '' then
+      local result = vim.fn.system('git commit ' .. vim.fn.shellescape(filepath) .. ' -m ' .. vim.fn.shellescape(commit_msg))
+      print(result)
+      vim.api.nvim_exec_autocmds('User', { pattern = 'GitOperationComplete' })
+    end
+  end
+end, { desc = 'Git [c]ommit current buffer' })
+
+vim.keymap.set('n', 'gp', function()
+  local result = vim.fn.system 'git push'
+  print(result)
+  vim.api.nvim_exec_autocmds('User', { pattern = 'GitOperationComplete' })
+end, { desc = 'Git [p]ush' })
+
 -- Register with vim-which-key
 local wk = require 'which-key'
 wk.add {
