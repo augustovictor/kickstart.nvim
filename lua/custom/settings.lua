@@ -50,8 +50,6 @@ vim.keymap.set('n', '<localleader>yp', function()
 end, { desc = 'Copy current file path to clipboard', silent = true })
 -- Search
 vim.keymap.set('x', '/', '<Esc>/\\%V', { desc = 'Search in visual selection', silent = true })
-
--- vim-visual-multi
 -- Register with vim-which-key
 local wk = require 'which-key'
 wk.add {
@@ -61,8 +59,6 @@ wk.add {
   { '<leader>mp', '<Plug>(VM-Add-Cursor-At-Pos)', desc = 'Add Cursor At Pos', mode = 'n' },
   { '<leader>mo', '<Plug>(VM-Toggle-Mappings)', desc = 'Toggle Mappings', mode = 'n' },
 }
-
--- [[ Telescope Custom Mappings ]]
 local telescope = require 'telescope'
 local actions = require 'telescope.actions'
 
