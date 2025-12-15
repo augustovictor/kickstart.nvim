@@ -123,9 +123,9 @@ return {
                 end
               end
 
-              -- Show from one level after the common prefix (the divergence point)
+              -- Show from the parent of the divergence point (one before divergence)
               local parts = vim.split(target_path, '/', { plain = true })
-              local start_idx = common_prefix_len + 1
+              local start_idx = math.max(1, common_prefix_len)
 
               -- Safety: ensure we at least show parent/filename
               if start_idx >= #parts then
