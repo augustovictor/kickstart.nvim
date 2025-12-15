@@ -1,5 +1,6 @@
 -- [[ Custom configs]]
 vim.opt.fileformats = { 'unix', 'mac', 'dos' } -- set file formats
+-- vim.opt.wrap = false
 
 -- [[ Custom Commands ]]
 vim.keymap.set('n', '<leader>st', function()
