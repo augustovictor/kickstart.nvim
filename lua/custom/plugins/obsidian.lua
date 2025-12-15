@@ -21,6 +21,7 @@ return {
           '[p] Paste Image',
           '[c] Toggle Checkbox',
           '[l] Follow Link',
+          '[w] Switch Workspace',
         }, {
           prompt = 'Obsidian:',
           format_item = function(item)
@@ -43,6 +44,7 @@ return {
               require('obsidian').util.toggle_checkbox()
             end,
             ['[l] Follow Link'] = 'ObsidianFollowLink',
+            ['[w] Switch Workspace'] = 'ObsidianWorkspace',
           }
           local cmd = commands[choice]
           if type(cmd) == 'function' then
@@ -63,12 +65,41 @@ return {
     { '<leader>om', '<cmd>ObsidianTomorrow<cr>', desc = 'Obsidian: To[m]orrow' },
     { '<leader>oo', '<cmd>ObsidianOpen<cr>', desc = 'Obsidian: [O]pen in app' },
     { '<leader>op', '<cmd>ObsidianPasteImg<cr>', desc = 'Obsidian: [P]aste Image' },
+    { '<leader>ow', '<cmd>ObsidianWorkspace<cr>', desc = 'Obsidian: Switch [W]orkspace' },
   },
   opts = {
     workspaces = {
       {
         name = 'personal',
         path = '/Users/victoraugusto/Documents/Obsidian Vault/AAAGitVault',
+        overrides = {
+          templates = {
+            folder = '/Users/victoraugusto/Documents/Obsidian Vault/AAAGitVault/templates',
+          },
+          daily_notes = {
+            folder = 'AAAGitVault/_ME/daily',
+            date_format = '%Y-%m-%d',
+            alias_format = '%B %-d, %Y',
+            default_tags = { 'daily-notes' },
+          },
+        },
+      },
+      {
+        name = 'work',
+        path = '/Users/victoraugusto/Documents/Obsidian Vault/WorkVault',
+        overrides = {
+          templates = {
+            folder = '/Users/victoraugusto/Documents/Obsidian Vault/AAAGitVault/templates',
+            default = 'daily-work.md',
+          },
+          daily_notes = {
+            folder = 'WorkVault/daily',
+            date_format = '%Y-%m-%d',
+            alias_format = '%B %-d, %Y',
+            default_tags = { 'daily-notes', 'work' },
+            template = 'daily-work.md',
+          },
+        },
       },
     },
 
@@ -149,8 +180,8 @@ return {
       return out
     end,
 
+    -- Default templates config (can be overridden per workspace)
     templates = {
-      folder = 'templates',
       date_format = '%Y-%m-%d',
       time_format = '%H:%M',
     },
