@@ -79,7 +79,7 @@ vim.keymap.set('n', 'gu', function()
   end
 end, { desc = 'Git [u]nstage current buffer' })
 
-vim.keymap.set('n', 'gc', function()
+vim.keymap.set('n', 'gm', function()
   local filepath = vim.api.nvim_buf_get_name(0)
   if filepath ~= '' then
     local commit_msg = vim.fn.input 'Commit message: '
