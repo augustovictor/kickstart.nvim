@@ -6,6 +6,9 @@ return {
     -- Enable indent guides
     indent = {
       enabled = true,
+      animate = {
+        enabled = false,
+      },
     },
     -- Enable git features
     git = {
