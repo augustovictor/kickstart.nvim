@@ -1,5 +1,6 @@
 -- [[ Custom configs]]
 vim.opt.fileformats = { 'unix', 'mac', 'dos' } -- set file formats
+vim.o.spell = true
 -- vim.opt.wrap = false
 
 -- [[ Custom Commands ]]
@@ -100,11 +101,49 @@ end, { desc = 'Git [p]ush' })
 -- Register with vim-which-key
 local wk = require 'which-key'
 wk.add {
+  -- Visual Multi
   { '<leader>m', group = 'Visual Multi', mode = 'n' },
   { '<leader>ma', '<Plug>(VM-Select-All)', desc = 'Select All', mode = 'n' },
   { '<leader>mr', '<Plug>(VM-Start-Regex-Search)', desc = 'Regex Search', mode = 'n' },
   { '<leader>mp', '<Plug>(VM-Add-Cursor-At-Pos)', desc = 'Add Cursor At Pos', mode = 'n' },
   { '<leader>mo', '<Plug>(VM-Toggle-Mappings)', desc = 'Toggle Mappings', mode = 'n' },
+
+  -- Git operations (buffer-level)
+  { 'ga', desc = 'Git add current buffer' },
+  { 'gu', desc = 'Git unstage current buffer' },
+  { 'gm', desc = 'Git commit current buffer' },
+  { 'gp', desc = 'Git push' },
+
+  -- Buffer navigation
+  { '<S-H>', desc = 'Previous buffer' },
+  { '<S-L>', desc = 'Next buffer' },
+  { '<S-R>', desc = 'Reload current buffer' },
+  { '<leader>x', desc = 'Close current buffer' },
+  { '<leader>q', desc = 'Close current tab' },
+  { '<leader>z', desc = 'Zoom buffer (open in new tab)' },
+
+  -- Splits
+  { '<leader>sj', desc = 'Split horizontal' },
+  { '<leader>sl', desc = 'Split vertical' },
+
+  -- File operations
+  { '<leader>w', desc = 'Save all files' },
+  { '<localleader>yp', desc = 'Copy file path to clipboard' },
+
+  -- Escape shortcuts
+  { 'kj', desc = 'Escape to normal mode', mode = 'i' },
+  { 'kj', desc = 'Escape terminal mode', mode = 't' },
+
+  -- Blink completion
+  { '<C-e>', desc = 'Blink: Show/Hide completion menu', mode = 'i' },
+  { '<C-s>', desc = 'Blink: Show/Hide signature help', mode = 'i' },
+  { '<C-k>', desc = 'Blink: Show/Hide documentation', mode = 'i' },
+
+  -- Search
+  { '/', desc = 'Search in visual selection', mode = 'x' },
+
+  -- File completion
+  { '<C-x><C-f>', desc = 'File path completion', mode = 'i' },
 }
 local telescope = require 'telescope'
 local actions = require 'telescope.actions'
