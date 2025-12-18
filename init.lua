@@ -88,9 +88,6 @@ P.S. You can delete this when you're done too. It's your config now! :)
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
--- Session settings
-vim.o.sessionoptions = 'blank,buffers,curdir,folds,help,tabpages,winsize,winpos'
-
 -- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
@@ -167,11 +164,6 @@ vim.o.cursorline = true
 
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.o.scrolloff = 10
-
--- if performing an operation that would fail due to unsaved changes in the buffer (like `:q`),
--- instead raise a dialog asking if you wish to save the current file(s)
--- See `:help 'confirm'`
-vim.o.confirm = true
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
@@ -687,38 +679,18 @@ require('lazy').setup({
       --  - capabilities (table): Override fields in capabilities. Can be used to disable certain LSP features.
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
-      local servers = {
-        -- clangd = {},
-        -- gopls = {},
-        pyright = {},
-        terraformls = {
-          filetypes = { 'terraform', 'tf', 'hcl' },
-        },
-        -- rust_analyzer = {},
-        -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
-        --
-        -- Some languages (like typescript) have entire language plugins that can be useful:
-        --    https://github.com/pmizio/typescript-tools.nvim
-        --
-        -- But for many setups, the LSP (`ts_ls`) will work just fine
-        -- ts_ls = {},
-        --
 
-        lua_ls = {
-          -- cmd = { ... },
-          -- filetypes = { ... },
-          -- capabilities = {},
-          settings = {
-            Lua = {
-              completion = {
-                callSnippet = 'Replace',
-              },
-              -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
-              -- diagnostics = { disable = { 'missing-fields' } },
-            },
-          },
-        },
-      }
+      -- Load custom LSP servers from lua/custom/lsp.lua
+      local custom_lsp = require 'custom.lsp'
+      local servers = custom_lsp.servers or {}
+
+      -- You can also add servers here inline if needed
+      -- local servers = {
+      --   clangd = {},
+      --   gopls = {},
+      --   rust_analyzer = {},
+      --   ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
+      -- }
 
       -- Ensure the servers and tools above are installed
       --
@@ -734,14 +706,8 @@ require('lazy').setup({
       -- You can add other tools here that you want Mason to install
       -- for you, so that they are available from within Neovim.
       local ensure_installed = vim.tbl_keys(servers or {})
-      vim.list_extend(ensure_installed, {
-        'stylua', -- Used to format Lua code
-        'terraform',
-        'terraform-ls',
-        'yamlfmt',
-        'black', -- Used to format Python code
-        'isort', -- Used to sort imports in Python code
-      })
+      -- Load custom tools from lua/custom/lsp.lua
+      vim.list_extend(ensure_installed, custom_lsp.ensure_installed or {})
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
       require('mason-lspconfig').setup {
@@ -791,52 +757,14 @@ require('lazy').setup({
           }
         end
       end,
-      formatters_by_ft = {
-        lua = { 'stylua' },
-        terraform = { 'terraform' },
-        json = { 'jq' },
-        tf = { 'terraform' },
-        hcl = { 'hclfmt' },
-        yml = { 'yamlfmt' },
-        yaml = { 'yamlfmt' },
-        k8s_yaml = { 'kubeconform' },
-        -- Conform can also run multiple formatters sequentially
-        python = { 'isort', 'black' },
-        --
-        -- You can use 'stop_after_first' to run the first available formatter from the list
-        -- javascript = { "prettierd", "prettier", stop_after_first = true },
-      },
-      formatters = {
-        jq = {
-          command = 'jq',
-          args = { '.', '$FILENAME' },
-          stdin = true,
-        },
-        kubeconform = {
-          command = 'kubeconform',
-          args = {
-            '--strict', -- Example argument for strict validation
-            '--ignore-missing-schemas',
-            -- '--kubernetes-version',
-            -- '1.29.0', -- Specify your Kubernetes version
-            '--schema-location',
-            'default', -- Use default schema locations
-            '--output',
-            'json', -- Or other desired output format
-            '$FILENAME', -- Pass the current file to kubeconform
-          },
-          stdin = true,
-        },
-        terraform = {
-          command = 'terraform',
-          args = { 'fmt', '-' },
-          stdin = true,
-        },
-        hclfmt = {
-          command = 'hclfmt',
-          stdin = true,
-        },
-      },
+      -- Load custom formatters from lua/custom/formatters.lua
+      formatters_by_ft = require('custom.formatters').formatters_by_ft or {},
+      formatters = require('custom.formatters').formatters or {},
+      -- You can also add formatters here inline if needed
+      -- formatters_by_ft = {
+      --   lua = { 'stylua' },
+      --   python = { 'isort', 'black' },
+      -- },
     },
   },
 
@@ -845,37 +773,8 @@ require('lazy').setup({
     event = 'VimEnter',
     version = '1.*',
     dependencies = {
-      -- Snippet Engine
-      {
-        'L3MON4D3/LuaSnip',
-        version = '2.*',
-        build = (function()
-          -- Build Step is needed for regex support in snippets.
-          -- This step is not supported in many windows environments.
-          -- Remove the below condition to re-enable on windows.
-          if vim.fn.has 'win32' == 1 or vim.fn.executable 'make' == 0 then
-            return
-          end
-          return 'make install_jsregexp'
-        end)(),
-        dependencies = {
-          -- `friendly-snippets` contains a variety of premade snippets.
-          --    See the README about individual language/framework/plugin snippets:
-          --    https://github.com/rafamadriz/friendly-snippets
-          {
-            'rafamadriz/friendly-snippets',
-            config = function()
-              -- Necessary due to luasnip
-              require('luasnip.loaders.from_vscode').lazy_load()
-
-              -- Load custom Python snippets
-              local ls = require 'luasnip'
-              ls.add_snippets('python', require 'custom.snippets.python')
-            end,
-          },
-        },
-        opts = {},
-      },
+      -- LuaSnip is now configured in lua/custom/plugins/snippets.lua
+      -- This allows for better isolation and easier maintenance
       'folke/lazydev.nvim',
     },
     --- @module 'blink.cmp'
@@ -953,101 +852,8 @@ require('lazy').setup({
     },
   },
 
-  { -- You can easily change to a different colorscheme.
-    -- Change the name of the colorscheme plugin below, and then
-    -- change the command in the config to whatever the name of that colorscheme is.
-    --
-    -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-    'folke/tokyonight.nvim',
-    priority = 1000, -- Make sure to load this before all the other start plugins.
-    config = function()
-      ---@diagnostic disable-next-line: missing-fields
-      require('tokyonight').setup {
-        style = 'night',
-        styles = {
-          -- Your legacy config had almost no italics, so we disable them here
-          comments = { italic = false },
-          keywords = { italic = false },
-          functions = { italic = false },
-          variables = { italic = false },
-          sidebars = 'normal',
-          floats = 'normal',
-        },
-        on_colors = function(colors)
-          -- 1. Base Palette
-          colors.bg = '#2b2b2b' -- Editor Background
-          colors.fg = '#a9b7c6' -- Main Text
-          colors.bg_dark = '#2b2b2b'
-
-          -- 2. Sidebar Specific (IntelliJ Classic Tool Window Grey)
-          colors.bg_sidebar = '#313335'
-          -- colors.bg_float = '#3c3f41' -- Slightly lighter for documentation popups
-
-          -- 3. Syntax Colors
-          colors.orange = '#CC7833'
-          colors.green = '#6A8759'
-          colors.yellow = '#FBC862'
-          colors.purple = '#9876AA'
-          colors.blue = '#769AA5'
-          colors.comment = '#808080'
-        end,
-
-        on_highlights = function(hl, c)
-          -- Editor Overrides
-          hl.Normal = { bg = c.bg, fg = c.fg }
-          hl.CursorLine = { bg = '#323232' }
-          hl.Visual = { bg = '#214283' }
-          hl.LineNr = { fg = '#888888', bg = '#323232' } -- Matches the gutter to the sidebar tone
-          hl.SignColumn = { bg = '#323232' }
-
-          -- Syntax Overrides
-          hl['@keyword'] = { fg = c.orange }
-          hl['@function'] = { fg = c.yellow }
-          hl['@string'] = { fg = c.green }
-          hl['@comment'] = { fg = c.comment }
-          hl['@variable'] = { fg = c.fg }
-          hl['@constant'] = { fg = c.purple }
-          hl['@property'] = { fg = c.purple }
-          hl['@type'] = { fg = c.orange }
-
-          ---------------------------------------------------------
-          -- SIDEBAR CONFIGURATION (IntelliJ Style)
-          ---------------------------------------------------------
-
-          -- 1. Backgrounds (Forces the gray tool-window look)
-          hl.NeoTreeNormal = { bg = c.bg_sidebar, fg = c.fg }
-          hl.NeoTreeNormalNC = { bg = c.bg_sidebar, fg = c.fg }
-          hl.NvimTreeNormal = { bg = c.bg_sidebar, fg = c.fg }
-
-          -- 2. Folders & Files
-          hl.NeoTreeRootName = { fg = c.fg, bold = true }
-          hl.NeoTreeDirectoryName = { fg = c.fg } -- IntelliJ folders are standard grey
-          hl.NeoTreeDirectoryIcon = { fg = c.fg }
-
-          -- 3. Active File Highlighting
-          -- IntelliJ highlights the currently open file with a different background or bold text
-          hl.NeoTreeFileNameOpened = { fg = c.fg, bold = true }
-          -- If you want the background highlight style:
-          hl.NeoTreeCursorLine = { bg = '#0d293e' }
-
-          -- 4. Git Status Colors (Matching IntelliJ)
-          hl.NeoTreeGitAdded = { fg = c.green }
-          hl.NeoTreeGitConflict = { fg = c.orange }
-          hl.NeoTreeGitDeleted = { fg = c.comment }
-          hl.NeoTreeGitIgnored = { fg = c.comment }
-          hl.NeoTreeGitModified = { fg = c.orange, bold = true }
-          hl.NeoTreeGitUntracked = { fg = c.orange }
-
-          -- 5. Window Separator
-          hl.WinSeparator = { fg = '#555555', bg = c.bg_sidebar }
-        end,
-      }
-      -- Load the colorscheme here.
-      -- Like many other themes, this one has different styles, and you could load
-      -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'tokyonight-night'
-    end,
-  },
+  -- NOTE: Colorscheme configuration has been moved to lua/custom/plugins/colorscheme.lua
+  -- This keeps init.lua clean and allows easier customization without conflicts
 
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
@@ -1144,7 +950,7 @@ require('lazy').setup({
   require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
   require 'kickstart.plugins.autopairs',
-  require 'kickstart.plugins.neo-tree',
+  -- NOTE: neo-tree configuration moved to lua/custom/plugins/neo-tree.lua
   require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`

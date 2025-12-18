@@ -1,7 +1,14 @@
 -- [[ Custom configs]]
+-- Core vim settings (moved from init.lua to keep it clean)
 vim.opt.fileformats = { 'unix', 'mac', 'dos' } -- set file formats
 vim.o.spell = true
 -- vim.opt.wrap = false
+
+-- Session settings (moved from init.lua)
+vim.o.sessionoptions = 'blank,buffers,curdir,folds,help,tabpages,winsize,winpos'
+
+-- Confirm before quit with unsaved changes (moved from init.lua)
+vim.o.confirm = true
 
 -- [[ Custom Commands ]]
 vim.keymap.set('n', '<leader>st', function()
