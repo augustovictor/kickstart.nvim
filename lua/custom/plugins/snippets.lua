@@ -30,6 +30,7 @@ return {
 
     -- Load custom Python snippets
     ls.add_snippets('python', require 'custom.snippets.python')
+    ls.add_snippets('markdown', require 'custom.snippets.markdown')
 
     -- Add more custom snippets for other languages here
     -- Example:
